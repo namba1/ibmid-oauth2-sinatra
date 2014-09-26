@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'haml' # template engine
 require 'json'
 require 'mustache/sinatra'
 require 'oauth2'
@@ -21,9 +22,6 @@ get '/' do
   
   appInfo = @env["VCAP_APPLICATION"]
   services = @env["VCAP_SERVICES"]
-  #TODO: Get service credentials and communicate with bluemix services.
 
-  # render template
-  #haml :hi
   mustache :login
 end

@@ -39,4 +39,3 @@ DEPENDENCIES
   oauth2
   sinatra
   sinatra-mustache
-  
