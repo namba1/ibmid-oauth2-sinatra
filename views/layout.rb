@@ -1,9 +1,9 @@
 class App < Sinatra::Base
 	module Views
-		class Login < Mustache
+		class Layout < Mustache
 			
-			def doit
-				"This is a test"
+			def title
+				"IBM ID Test"
 			end
 			
 			def version

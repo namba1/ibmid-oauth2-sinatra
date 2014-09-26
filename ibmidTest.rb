@@ -5,6 +5,15 @@ require 'oauth2'
 
 
 class App < Sinatra::Base
+	register Mustache::Sinatra
+	require 'views/layout'
+	
+	set :mustache, {
+		:views => 'views/',
+		:templates => 'templates/'
+	}
+	############################################
+	
 	get '/' do
 =begin
 	  # page variable
@@ -23,6 +32,7 @@ class App < Sinatra::Base
 	  @appInfo = @env["VCAP_APPLICATION"]
 	  @services = @env["VCAP_SERVICES"]
 =end
-	  mustache :login, :layout => false
+		content_type 'text/plain'
+	  mustache :login
 	end
 end 
