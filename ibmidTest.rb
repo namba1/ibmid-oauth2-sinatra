@@ -6,11 +6,13 @@ require 'oauth2'
 
 class App < Sinatra::Base
 	register Mustache::Sinatra
-	require 'views/layout'
+	require './views/layout'
+	
+	include Rack::Utils; alias_method :h, :escape_html
 	
 	set :mustache, {
-		:views => 'views/',
-		:templates => 'templates/'
+		:views     => './views',
+		:templates => './templates',
 	}
 	############################################
 	
@@ -32,7 +34,7 @@ class App < Sinatra::Base
 	  @appInfo = @env["VCAP_APPLICATION"]
 	  @services = @env["VCAP_SERVICES"]
 =end
-		content_type 'text/plain'
+
 	  mustache :login
 	end
 end 
