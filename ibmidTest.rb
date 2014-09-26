@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'haml' # template engine
 require 'json'
 require 'mustache/sinatra'
 require 'oauth2'
