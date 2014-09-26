@@ -23,6 +23,6 @@ class App < Sinatra::Base
 	  @appInfo = @env["VCAP_APPLICATION"]
 	  @services = @env["VCAP_SERVICES"]
 =end
-	  mustache :login
+	  mustache :login, :layout => false
 	end
 end 
