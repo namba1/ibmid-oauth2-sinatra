@@ -1,3 +1,4 @@
 ### require './helloWorld'
 require './ibmidTest'
-run Sinatra::Application
+use Rack::ShowExceptions
+run App
