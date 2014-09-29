@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'mustache/sinatra'
-require 'oauth2'
+#require 'oauth2'
 
 
 class App < Sinatra::Base
@@ -20,26 +20,34 @@ class App < Sinatra::Base
 	get '/' do
 	  @version = RUBY_VERSION
 	  @os = RUBY_PLATFORM
-
-	  @appInfo = ENV["VCAP_APPLICATION"]
-	  @services = ENV["VCAP_SERVICES"]
-
-	  mustache :login
+	  #@appInfo = ENV["VCAP_APPLICATION"]
+    credentials = JSON.parse(ENV["VCAP_SERVICES"])["single.sign.on"].first["credentials"]
+    @params = []
+    credentials.each do |key, value|
+      @params.push { :key => key, :value => value}
+    end
+	  mustache :home
 	end
 	
 	get '/login' do
 	   mustache :login  
 	end
 	
+	get '/auth/login' do
+	  
+	end
+	
 	get '/auth/callback' do
+	  redirect '/greetings'
 	end
 	
 	get '/greetins' do
 	  @user_info = { :name => "Unknown" }
+	  mustache :greetings
 	end
 	
 	get '/logout' do
-	  
+	  redirect '/login'
 	end
 end 
 

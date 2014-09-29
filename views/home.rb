@@ -6,12 +6,8 @@ class App < Sinatra::Base
 				"Ruby Version: #{@version}  Platform: #{@os}"
 			end
 			
-			def appInfo
-				@appInfo
-			end
-			
-		  def services
-	  		@services
+		  def params
+	  		@params
 	  	end
 		end		
 	end
