@@ -26,7 +26,23 @@ class App < Sinatra::Base
 
 	  mustache :login
 	end
+	
+	get '/login' do
+	   mustache :login  
+	end
+	
+	get '/auth/callback' do
+	end
+	
+	get '/greetins' do
+	  @user_info = { :name => "Unknown" }
+	end
+	
+	get '/logout' do
+	  
+	end
 end 
+
 
 =begin
     options = {
