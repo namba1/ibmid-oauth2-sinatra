@@ -32,9 +32,9 @@ class SingleSignOn
   end
   
   def token_request(code)
-    token = @client.auth_code.get_token(code, :redirect_uri => @redirect_uri)
-    token_request.options[:header_format] = "OAuth %s"
-		@token_string = token_request.token
+    token_req = @client.auth_code.get_token(code, :redirect_uri => @redirect_uri)
+    token_req.options[:header_format] = "OAuth %s"
+		@token_string = token_req.token
   end
   
   def profile_request()
