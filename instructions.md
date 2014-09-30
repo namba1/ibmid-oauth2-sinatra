@@ -16,7 +16,11 @@ Focused on quickly creating web applications in Ruby with minimal effort.
 		cf target -o namba1@jp.ibm.com -s dev
 
 6. Deploy your app:
-
+		bundle install --path dummy
 		cf push sinatra99
 
 7. Access your app: sinatra99.mybluemix.net
+
+8. View log
+
+		cf logs sinatra99 --recent
