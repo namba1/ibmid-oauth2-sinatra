@@ -14,10 +14,10 @@ class SingleSignOn
     rescue
       @credentials = {
         "profile_resource" =>  "https://idaas.ng.bluemix.net/idaas/resources/profile.jsp",
-        "tokeninfo_resource"=>"https://idaas.ng.bluemix.net/idaas/resources/tokeninfo.jsp",
-        "openidProviderURL"=>"https://idaas.ng.bluemix.net/idaas/openid",
-        "token_url"=>         "https://idaas.ng.bluemix.net/sps/oauth20sp/oauth20/token",
-        "authorize_url"=>     "https://idaas.ng.bluemix.net/sps/oauth20sp/oauth20/authorize"      
+        "tokeninfo_resource"=> "https://idaas.ng.bluemix.net/idaas/resources/tokeninfo.jsp",
+        "openidProviderURL"=> "https://idaas.ng.bluemix.net/idaas/openid",
+        "token_url"=>          "https://idaas.ng.bluemix.net/sps/oauth20sp/oauth20/token",
+        "authorize_url"=>      "https://idaas.ng.bluemix.net/sps/oauth20sp/oauth20/authorize"      
       }
     end
     

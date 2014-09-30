@@ -19,6 +19,7 @@ class App < Sinatra::Base
 	configure do
 		sso_instance = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
 		@@sso = sso_instance
+		@@access_token = ""
 		set :sso, sso_instance
 	end
 	############################################
@@ -53,11 +54,12 @@ p token_request
 	get '/auth/callback' do
 	  auth_code = params[:code]
 	  token_string = @@sso.token_request(auth_code)
+	  @@token_string = token_string
 	  #prof_request = @@sso.profile_request()
 		#resp = prof_request.post('https://idaas.ng.bluemix.net/idaas/resources/profile.jsp')
 	  #"<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>#{resp.body}"
 	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>"
-	  @@token_string = token_string
+
 	  #redirect '/greetings'
 	end
 	
