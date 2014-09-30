@@ -1,10 +1,11 @@
 class App < Sinatra::Base
 	module Views
 		class Login < Mustache
-
-			def version
-				"0.01"
-			end	
+      
+      def auth_url
+        @auth_url
+      end
+      
 		end		
 	end
 end

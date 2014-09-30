@@ -9,6 +9,10 @@ class App < Sinatra::Base
 		  def params
 	  		@params
 	  	end
+	  	
+	  	def auth_url
+	  	  @auth_url
+	  	end
 		end		
 	end
 end

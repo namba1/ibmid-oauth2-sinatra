@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'mustache/sinatra'
-#require 'oauth2'
+require 'singlesignon'
 
 
 class App < Sinatra::Base
@@ -15,39 +15,62 @@ class App < Sinatra::Base
 		:views     => './views',
 		:templates => './templates',
 	}
-	############################################
 	
+	configure do
+		sso = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
+		set :sso, sso
+	end
+	############################################
+	## Test 
+=begin
+sso = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
+puts sso.authorize_url
+code = "70r6CQkd6KR9EIlKXByJdicODPVINy"
+token_request = sso.token_request(code)
+p token_request
+=end
+
 	get '/' do
 	  @version = RUBY_VERSION
 	  @os = RUBY_PLATFORM
-	  #@appInfo = ENV["VCAP_APPLICATION"]
     credentials = JSON.parse(ENV["VCAP_SERVICES"])["single.sign.on"].first["credentials"]
-    @params = []
-    credentials.each do |key, value|
-      @params.push { :key => key, :value => value}
-    end
+    @params = credentials.collect { |k, v|  {:key => k, :value => v} }
+    
+    @auth_url = sso.authorize_url
+
 	  mustache :home
 	end
 	
-	get '/login' do
-	   mustache :login  
+	get '/auth/login' do
+		@auth_url = sso.authorize_url
+	  mustache :login  
 	end
 	
-	get '/auth/login' do
+	post '/auth/ibmid' do
 	  
+	  "<p>IBM ID authorization code</p>"
 	end
 	
 	get '/auth/callback' do
-	  redirect '/greetings'
+	  auth_code = params[:code]
+	  token_request = sso.token_request(code)
+		token_request.options[:header_format] = "OAuth %s"
+		token_string = token_request.token
+	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>"
+	  #redirect '/greetings'
 	end
 	
-	get '/greetins' do
+  post '/auth/logout' do
+    redirect '/auth/login'
+  end
+  	
+	get '/greetings' do
 	  @user_info = { :name => "Unknown" }
 	  mustache :greetings
 	end
-	
-	get '/logout' do
-	  redirect '/login'
+
+	get '/exp' do
+		
 	end
 end 
 
