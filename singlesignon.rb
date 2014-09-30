@@ -32,7 +32,13 @@ class SingleSignOn
   end
   
   def token_request(code)
-    @token = @client.auth_code.get_token(code, :redirect_uri => @redirect_uri)
+    token = @client.auth_code.get_token(code, :redirect_uri => @redirect_uri)
+    token_request.options[:header_format] = "OAuth %s"
+		@token_string = token_request.token
+  end
+  
+  def profile_request()
+  	request = OAuth2::AccessToken.new @client, @token_string, :header_format => "OAuth %s"
   end
   ## Helper Functions
   def site (url)

@@ -52,10 +52,10 @@ p token_request
 	
 	get '/auth/callback' do
 	  auth_code = params[:code]
-	  token_request = @@sso.token_request(auth_code)
-		token_request.options[:header_format] = "OAuth %s"
-		token_string = token_request.token
-	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>"
+	  token_string = @@sso.token_request(auth_code)
+	  prof_request = @@sso.profile_request()
+		resp = request.get('/sites')
+	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>#{resp.body}"
 	  #redirect '/greetings'
 	end
 	
