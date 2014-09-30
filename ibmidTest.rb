@@ -55,7 +55,7 @@ p token_request
 	  token_string = @@sso.token_request(auth_code)
 	  #prof_request = @@sso.profile_request()
 		#resp = prof_request.post('https://idaas.ng.bluemix.net/idaas/resources/profile.jsp')
-	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>#{resp.body}"
+	  #"<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>#{resp.body}"
 	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>"
 	  @token_string = token_string
 	  #redirect '/greetings'
