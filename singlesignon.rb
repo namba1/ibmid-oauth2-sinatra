@@ -9,9 +9,9 @@ class SingleSignOn
     @client_secret =client_secret
     @redirect_uri = redirect_uri
     
-    if env_services then
+    begin
       @credentials = JSON.parse(env_services)["single.sign.on"].first["credentials"]
-    else
+    rescue
       @credentials = {
         "profile_resource" =>  "https://idaas.ng.bluemix.net/idaas/resources/profile.jsp",
         "tokeninfo_resource"=>"https://idaas.ng.bluemix.net/idaas/resources/tokeninfo.jsp",
