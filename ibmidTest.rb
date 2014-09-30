@@ -17,8 +17,8 @@ class App < Sinatra::Base
 	}
 	
 	configure do
-		sso_instance = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
-		set :sso, sso_instance
+#		sso_instance = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
+#		set :sso, sso_instance
 	end
 	############################################
 	## Test 
@@ -33,28 +33,27 @@ p token_request
 	get '/' do
 	  @version = RUBY_VERSION
 	  @os = RUBY_PLATFORM
-    credentials = JSON.parse(ENV["VCAP_SERVICES"])["single.sign.on"].first["credentials"]
+		credentials = JSON.parse(ENV["VCAP_SERVICES"])["single.sign.on"].first["credentials"]
     @params = credentials.collect { |k, v|  {:key => k, :value => v} }
-    @auth_url = sso.authorize_url
+    @auth_url = "xxxx" #sso.authorize_url
 
 	  mustache :home
 	end
 	
 	get '/auth/login' do
-		@auth_url = sso.authorize_url
+		@auth_url = "xxxx" #sso.authorize_url
 	  mustache :login  
 	end
 	
 	post '/auth/ibmid' do
-	  
 	  "<p>IBM ID authorization code</p>"
 	end
 	
 	get '/auth/callback' do
 	  auth_code = params[:code]
-	  token_request = sso.token_request(code)
-		token_request.options[:header_format] = "OAuth %s"
-		token_string = token_request.token
+	  #token_request = sso.token_request(code)
+		#token_request.options[:header_format] = "OAuth %s"
+		#token_string = token_request.token
 	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>"
 	  #redirect '/greetings'
 	end
