@@ -2,6 +2,12 @@
  <H1>Greetings!</H1>
 <p>Hello {{user_name}}</p>
 
+<form id="get_params" name="get_params" action="https://idaas.ng.bluemix.net/idaas/resources/profile.jsp" method="POST">
+	<input type="text" name="access_token" value ='{{token}}'/>
+    <input type='submit' value='Get Profile'>
+</form>
+<p></p>
+
 <form id="logout_button"  action="/auth/logout" method="POST">
     <input type='submit' value='Logout'>
 </form>
