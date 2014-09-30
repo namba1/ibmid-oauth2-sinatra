@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'mustache/sinatra'
-#require 'singlesignon'
+require './singlesignon.rb'
 
 
 class App < Sinatra::Base
