@@ -36,7 +36,7 @@ p token_request
 	  @os = RUBY_PLATFORM
 		credentials = JSON.parse(ENV["VCAP_SERVICES"])["single.sign.on"].first["credentials"]
     @params = credentials.collect { |k, v|  {:key => k, :value => v} }
-    @auth_url = sso.authorize_url
+    @auth_url = @@sso.authorize_url
 
 	  mustache :home
 	end
@@ -52,7 +52,7 @@ p token_request
 	
 	get '/auth/callback' do
 	  auth_code = params[:code]
-	  token_request = @@sso.token_request(code)
+	  token_request = @@sso.token_request(auth_code)
 		token_request.options[:header_format] = "OAuth %s"
 		token_string = token_request.token
 	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>"
