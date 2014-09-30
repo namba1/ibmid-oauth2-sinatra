@@ -57,7 +57,7 @@ p token_request
 		#resp = prof_request.post('https://idaas.ng.bluemix.net/idaas/resources/profile.jsp')
 	  #"<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>#{resp.body}"
 	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>"
-	  @token_string = token_string
+	  @@token_string = token_string
 	  #redirect '/greetings'
 	end
 	
@@ -67,6 +67,7 @@ p token_request
   	
 	get '/greetings' do
 	  @user_info = { :name => "Unknown" }
+	  @token = @@token_string
 	  mustache :greetings
 	end
 
