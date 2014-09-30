@@ -18,6 +18,7 @@ class App < Sinatra::Base
 	
 	configure do
 		sso_instance = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
+		@@sso = sso_instance
 		set :sso, sso_instance
 	end
 	############################################
@@ -41,7 +42,7 @@ p token_request
 	end
 	
 	get '/auth/login' do
-		@auth_url = sso.authorize_url
+		@auth_url = @@sso.authorize_url
 	  mustache :login  
 	end
 	
