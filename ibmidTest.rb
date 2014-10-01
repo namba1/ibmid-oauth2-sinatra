@@ -24,14 +24,6 @@ class App < Sinatra::Base
 		@@credentials = JSON.parse(ENV["VCAP_SERVICES"])["single.sign.on"].first["credentials"]		
 	end
 	############################################
-	## Test 
-=begin
-sso = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
-puts sso.authorize_url
-code = "70r6CQkd6KR9EIlKXByJdicODPVINy"
-token_request = sso.token_request(code)
-p token_request
-=end
 
 	get '/' do
 	  @version = RUBY_VERSION
@@ -93,20 +85,52 @@ end
         policy: 'http://www.ibm.com/idaas/authnpolicy/reauth',
         scope: ['profile']
     };
-    {
-			"single.sign.on":[
-				{
-					"name":"Single Sign On -kr",
-					"label":"single.sign.on",
-					"tags":["ibm_created","security"],
-					"plan":"standard",		
-					"credentials":{
-						"profile_resource":"https://idaas.ng.bluemix.net/idaas/resources/profile.jsp",
-						"tokeninfo_resource":"https://idaas.ng.bluemix.net/idaas/resources/tokeninfo.jsp",
-						"token_url":"https://idaas.ng.bluemix.net/sps/oauth20sp/oauth20/token",
-						"authorize_url":"https://idaas.ng.bluemix.net/sps/oauth20sp/oauth20/authorize"
-					}
-				}
-			]
-		}	
+    
+if( code != null && code.length() > 0 ){
+  //. アクセストークンを取得
+  String req_url = "https://idaas.ng.bluemix.net/sps/oauth20sp/oauth20/token?client_id=" + client_identifier + "&client_secret=" + client_secret;
+  String param = "grant_type=authorization_code"
+      + "&redirect_uri=" + URLEncoder.encode( server_url )
+      + "&code=" + code;
+  try{
+    HttpClient client = new HttpClient();
+    PostMethod post = new PostMethod( req_url );
+		
+    post.setRequestHeader( "Content-Type", "application/x-www-form-urlencoded" );
+    post.setRequestHeader( "Content-Length", "" + param.length() );
+    post.setRequestBody( param );
+		
+    int sc = client.executeMethod( post );
+    if( sc == 200 ){
+      String body = post.getResponseBodyAsString();
+      int n1 = body.indexOf( "\"access_token\":\"" );
+      if( n1 > 0 ){
+        int n2 = body.indexOf( "\"", n1 + 16 );
+        if( n2 > n1 ){
+          access_token = body.substring( n1 + 16, n2 );
+					
+          //. アクセストークンを使ってプロファイルデータを取得
+          String req_url1 = "https://idaas.ng.bluemix.net/idaas/resources/profile.jsp";
+          String param1 = "access_token=" + access_token;
+
+          HttpClient client1 = new HttpClient();
+          PostMethod post1 = new PostMethod( req_url1 );
+						
+          post1.setRequestHeader( "Content-Type", "application/x-www-form-urlencoded" );
+          post1.setRequestHeader( "Content-Length", "" + param1.length() );
+          post1.setRequestBody( param1 );
+          int sc1 = client.executeMethod( post1 );
+          if( sc1 == 200 ){
+            String body1 = post1.getResponseBodyAsString();
+            n1 = body1.indexOf( "\"email\":[\"" );
+            if( n1 > 0 ){
+              n2 = body1.indexOf( "\"", n1 + 10 );
+              if( n2 > n1 ){
+                email = body1.substring( n1 + 10, n2 );
+              }
+            }
+          }
+        }
+      }
+    }
 =end

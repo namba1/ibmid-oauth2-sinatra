@@ -35,11 +35,17 @@ class SingleSignOn
     token_req = @client.auth_code.get_token(code, :redirect_uri => @redirect_uri)
     token_req.options[:header_format] = "OAuth %s"
 		@token_string = token_req.token
+		token_req.to_hash.to_s		### experiment
   end
   
   def profile_request()
   	request = OAuth2::AccessToken.new @client, @token_string, :header_format => "OAuth %s"
   end
+  
+  def profile_url
+  	@credentials["profile_resource"]
+  end
+  
   ## Helper Functions
   def site (url)
     url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |s| s[1] end  
@@ -49,13 +55,3 @@ class SingleSignOn
     url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |s| s[2] end  
   end
 end # class
-
-
-## Test 
-=begin
-sso = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
-puts sso.authorize_url
-code = "70r6CQkd6KR9EIlKXByJdicODPVINy"
-token_request = sso.token_request(code)
-p token_request
-=end
