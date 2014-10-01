@@ -28,7 +28,7 @@ class SingleSignOn
   end
   
   def authorize_url
-    @auth_url = @client.auth_code.authorize_url(:redirect_uri => @redirect_uri, :response_type => 'code')
+    @auth_url = @client.auth_code.authorize_url(:redirect_uri => @redirect_uri, :response_type => 'code', :scope => 'profile')
   end
   
   def token_request(code)
