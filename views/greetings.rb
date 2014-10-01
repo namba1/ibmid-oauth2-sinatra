@@ -6,6 +6,10 @@ class App < Sinatra::Base
 			  @user_info[:name]
 			end
 			
+			def auth_code
+				@auth_code
+			end
+			
 			def token
 				@token_string
 			end

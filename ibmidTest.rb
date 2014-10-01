@@ -20,7 +20,9 @@ class App < Sinatra::Base
 		sso_instance = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
 		@@sso = sso_instance
 		@@access_token = ""
+		@@auth_code = ""
 		set :sso, sso_instance
+		@@credentials = JSON.parse(ENV["VCAP_SERVICES"])["single.sign.on"].first["credentials"]		
 	end
 	############################################
 	## Test 
@@ -35,8 +37,7 @@ p token_request
 	get '/' do
 	  @version = RUBY_VERSION
 	  @os = RUBY_PLATFORM
-		credentials = JSON.parse(ENV["VCAP_SERVICES"])["single.sign.on"].first["credentials"]
-    @params = credentials.collect { |k, v|  {:key => k, :value => v} }
+    @params = @@credentials.collect { |k, v|  {:key => k, :value => v} }
     @auth_url = @@sso.authorize_url
 
 	  mustache :home
@@ -52,17 +53,20 @@ p token_request
 	end
 	
 	get '/auth/callback' do
-	  auth_code = params[:code]
-	  token_string = @@sso.token_request(auth_code)
+	  @@auth_code = params[:code]
+	  @@token_string = @@sso.token_request(auth_code)
 	  @@token_string = token_string
 	  #prof_request = @@sso.profile_request()
 		#resp = prof_request.post('https://idaas.ng.bluemix.net/idaas/resources/profile.jsp')
-	  #"<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>#{resp.body}"
-	  "<p>IBM ID callback token = #{auth_code}</p><br/> Token String: #{token_string}<br/>"
 
-	  #redirect '/greetings'
+	  redirect '/greetings'
 	end
 	
+	post '/auth/profile' do
+		prof_request = @@sso.profile_request()
+		resp = prof_request.post('https://idaas.ng.bluemix.net/idaas/resources/profile.jsp')
+	end
+
   post '/auth/logout' do
     redirect '/auth/login'
   end
@@ -70,6 +74,7 @@ p token_request
 	get '/greetings' do
 	  @user_info = { :name => "Unknown" }
 	  @token = @@token_string
+	  @auth_code = @@auth_code
 	  mustache :greetings
 	end
 
