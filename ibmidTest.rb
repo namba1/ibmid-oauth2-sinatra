@@ -73,7 +73,7 @@ p token_request
   	
 	get '/greetings' do
 	  @user_info = { :name => "Unknown" }
-	  @token = @@token_string
+	  @token_string = @@token_string
 	  @auth_code = @@auth_code
 	  mustache :greetings
 	end
