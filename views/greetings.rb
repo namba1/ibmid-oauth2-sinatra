@@ -10,10 +10,6 @@ class App < Sinatra::Base
 				@auth_code
 			end
 			
-			def g_auth_code
-				@@auth_code			### experiment
-			end
-			
 			def token
 				@token_string
 			end
