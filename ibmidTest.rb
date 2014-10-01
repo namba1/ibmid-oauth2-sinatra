@@ -54,7 +54,7 @@ p token_request
 	
 	get '/auth/callback' do
 	  @@auth_code = params[:code]
-	  @@token_string = @@sso.token_request(auth_code)
+	  @@token_string = @@sso.token_request(@@auth_code)
 	  @@token_string = token_string
 	  #prof_request = @@sso.profile_request()
 		#resp = prof_request.post('https://idaas.ng.bluemix.net/idaas/resources/profile.jsp')
