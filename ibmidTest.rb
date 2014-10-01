@@ -17,11 +17,10 @@ class App < Sinatra::Base
 	}
 	
 	configure do
-		sso_instance = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
-		@@sso = sso_instance
+		@@sso = SingleSignOn.new("KraXSNezEWGomEFpYYUW", "AP5chAYohb2Mo8f8goQ4", "https://sinatra99.mybluemix.net/auth/callback")
 		@@access_token = ""
 		@@auth_code = ""
-		set :sso, sso_instance
+		#set :sso, @@sso
 		@@credentials = JSON.parse(ENV["VCAP_SERVICES"])["single.sign.on"].first["credentials"]		
 	end
 	############################################

@@ -42,11 +42,11 @@ class SingleSignOn
   end
   ## Helper Functions
   def site (url)
-    url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |part| part[1] end  
+    url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |s| s[1] end  
   end
   
   def path (url)
-    url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |part| part[2] end  
+    url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |s| s[2] end  
   end
 end # class
 
