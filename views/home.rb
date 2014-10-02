@@ -2,8 +2,12 @@ class App < Sinatra::Base
 	module Views
 		class Home < Mustache
 			
-			def info_msg
-				"Ruby Version: #{@version}  Platform: #{@os}"
+			def ruby_version
+				@version
+			end
+			
+			def platform
+				@os
 			end
 			
 		  def params

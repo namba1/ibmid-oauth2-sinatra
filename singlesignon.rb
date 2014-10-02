@@ -3,13 +3,9 @@ require 'json'
 require 'uri'
 
 class SingleSignOn
-	attr_reader :credentials, :auth_code, :authorized, :token_string, :profile
+	attr_reader :credentials, :auth_code, :authorized, :token_string, :profile, :error_message
 	
   def initialize(client_id, client_secret, redirect_uri, env_services = nil)
-    @client_id     = client_id
-    @client_secret = client_secret
-    @redirect_uri = redirect_uri
-    
     init_variables()
     
     begin
@@ -24,19 +20,20 @@ class SingleSignOn
       }
     end
     
+    @redirect_uri = redirect_uri
     @site       = site(@credentials["authorize_url"])
     @auth_path  = path(@credentials["authorize_url"])
     @token_path = path(@credentials["token_url"])
-    @client = OAuth2::Client.new(client_id, client_secret, :token_url => @token_path, :site => @site, :authorize_url => @auth_path)
+    @client     = OAuth2::Client.new(client_id, client_secret, :token_url => @token_path, :site => @site, :authorize_url => @auth_path)
   end
   
   def init_variables
-  	@auth_code = nil
+  	@auth_code = ""
   	@token = nil
-    @token_string = nil
+    @token_string = ""
     @profile = {}
     @authorized = false
-    @error_message = ""
+    @error_message = "Please log in."
   end
   
   def authorize_url
@@ -52,9 +49,8 @@ class SingleSignOn
 			@authorized = true
 		rescue
 			@error_message = "Failed to obtain token."
-			@auth_code = nil
 			@token = nil
-			@token_string = nil
+			@token_string = ""
 			@authorized = false
 		end
   end

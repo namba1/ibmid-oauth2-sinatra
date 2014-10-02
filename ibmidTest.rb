@@ -3,6 +3,12 @@ require 'json'
 require 'mustache/sinatra'
 require './singlesignon.rb'
 
+#-----------------------------------------------------------		
+CLIENT_ID     = "KraXSNezEWGomEFpYYUW"
+CLIENT_SECRET = "AP5chAYohb2Mo8f8goQ4"
+REDIRECT_URL  = "https://sinatra99.mybluemix.net/auth/callback"
+#-----------------------------------------------------------
+	
 class App < Sinatra::Base
 	register Mustache::Sinatra
 	require './views/layout'
@@ -14,17 +20,13 @@ class App < Sinatra::Base
 		:views     => './views',
 		:templates => './templates',
 	}
-	
-	CLIENT_ID     = "KraXSNezEWGomEFpYYUW"
-	CLIENT_SECRET = "AP5chAYohb2Mo8f8goQ4"
-	REDIRECT_URL  = "https://sinatra99.mybluemix.net/auth/callback"
 
 	def sso
 		settings.sso
 	end			
 
 	configure do
-		@@sso = SingleSignOn.new(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
+		@@sso = SingleSignOn.new(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, ENV["VCAP_SERVICES"])
 		set :sso, @@sso
 	end
 	############################################
