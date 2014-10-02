@@ -3,15 +3,19 @@ class App < Sinatra::Base
 		class Greetings < Mustache
 		
 			def user_name
-			  @user_info[:name]
+			  @user_info["name"][0]
 			end
 			
-			def auth_code
-				@auth_code
+			def profile
+				@profile
 			end
 			
-			def token
-				@token_string
+			def body_size
+				if @profile then
+					@profile.length() 
+				else
+					0
+				end
 			end
 		end		
 	end

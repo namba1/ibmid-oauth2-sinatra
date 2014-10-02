@@ -1,13 +1,8 @@
 <!DOCTYPE html>
  <H1>Greetings, {{user_name}}!</H1>
-<p>Authorization Code: {{auth_code}}</p>
 
-<form id="get_params" name="get_params" action="https://idaas.ng.bluemix.net/idaas/resources/profile.jsp" method="POST">
-	<input type="text" name="access_token" value ='{{token}}'/>
-	<input type="text" name="scope" value ='profile'/>
-    <input type='submit' value='Get Profile'>
-</form>
-<p></p>
+<p>Profile Body:<br/> {{profile}}</p>
+<p>Content Size: {{body_size}}</p>
 
 <form id="logout_button"  action="/auth/logout" method="POST">
     <input type='submit' value='Logout'>

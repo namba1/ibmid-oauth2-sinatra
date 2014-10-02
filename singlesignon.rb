@@ -5,8 +5,8 @@ require 'uri'
 class SingleSignOn
 
   def initialize(client_id, client_secret, redirect_uri, env_services = nil)
-    @client_id = client_id
-    @client_secret =client_secret
+    @client_id     = client_id
+    @client_secret = client_secret
     @redirect_uri = redirect_uri
     
     begin
@@ -32,14 +32,18 @@ class SingleSignOn
   end
   
   def token_request(code)
-    token_req = @client.auth_code.get_token(code, :redirect_uri => @redirect_uri)
-    token_req.options[:header_format] = "OAuth %s"
-		@token_string = token_req.token
-		token_req.to_hash.to_s		### experiment
+    @token = @client.auth_code.get_token(code, :redirect_uri => @redirect_uri)
+    @token.options[:header_format] = "OAuth %s"
+		@token.token
   end
   
   def profile_request()
-  	request = OAuth2::AccessToken.new @client, @token_string, :header_format => "OAuth %s"
+  	token_options = {:header_format => @token.options[:header_format] , :mode => :body, :expires_at => @token[:expires_at]}
+  	access_token = OAuth2::AccessToken.new( @client, @token.token, token_options)
+		## access_options = {:headers => {"Content-Length" => "access_token=#{@token.token}".length().to_s }}
+  	## resp = access_token.post(profile_url, access_options)
+  	resp = access_token.post(profile_url)
+  	resp.body
   end
   
   def profile_url
