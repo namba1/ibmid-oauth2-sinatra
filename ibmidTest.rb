@@ -15,11 +15,17 @@ class App < Sinatra::Base
 		:templates => './templates',
 	}
 	
+	CLIENT_ID     = "KraXSNezEWGomEFpYYUW"
+	CLIENT_SECRET = "AP5chAYohb2Mo8f8goQ4"
+	REDIRECT_URL  = "https://sinatra99.mybluemix.net/auth/callback"
+
+	def sso
+		settings.sso
+	end			
+
 	configure do
-		CLIENT_ID     = "KraXSNezEWGomEFpYYUW"
-		CLIENT_SECRET = "AP5chAYohb2Mo8f8goQ4"
-		REDIRECT_URL  = "https://sinatra99.mybluemix.net/auth/callback"
 		@@sso = SingleSignOn.new(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
+		set :sso, @@sso
 	end
 	############################################
 
@@ -28,7 +34,6 @@ class App < Sinatra::Base
 	  @os = RUBY_PLATFORM
     @params = @@sso.credentials.collect { |k, v|  {:key => k, :value => v} }
     @auth_url = @@sso.authorize_url
-
 	  mustache :home
 	end
 	

@@ -6,8 +6,6 @@
 </p>
 
 <H2>User Info</H2>
-<p>
-	{{#user_info}}
-	 	{{key}}: {{value}} <br/>
-	{{/user_info}}
-</p>
+{{#user_info}}
+ 	<li>{{key}} = {{value}} </li>
+{{/user_info}}
