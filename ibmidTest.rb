@@ -21,21 +21,25 @@ class App < Sinatra::Base
 		:templates => './templates',
 	}
 
-	def sso
-		settings.sso
-	end			
+	def sso; settings.sso; 	end			
 
 	configure do
 		@@sso = SingleSignOn.new(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, ENV["VCAP_SERVICES"])
 		set :sso, @@sso
 	end
+	
+	before do
+		unless @@sso.authorized
+			redirect '/auth/login'
+		end
+	end
+	
 	############################################
 
 	get '/' do
 	  @version = RUBY_VERSION
 	  @os = RUBY_PLATFORM
     @params = @@sso.credentials.collect { |k, v|  {:key => k, :value => v} }
-    @auth_url = @@sso.authorize_url
 	  mustache :home
 	end
 	
