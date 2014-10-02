@@ -1,6 +1,13 @@
 <!DOCTYPE html>
  <H1>Access Token</H1>
-<p>Authorization Code: {{auth_code}}</p>
-<p>Access Token: {{token}}</p>
+<p>
+	Authorization Code: {{auth_code}}<br/>
+	Access Token: {{token}}
+</p>
 
-<a href="/greetings">Get Profile Information</a>
+<H2>User Info</H2>
+<p>
+	{{#user_info}}
+	 	{{key}}: {{value}} <br/>
+	{{/user_info}}
+</p>

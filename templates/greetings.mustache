@@ -1,9 +1,8 @@
 <!DOCTYPE html>
  <H1>Greetings, {{user_name}}!</H1>
 
-<p>Profile Body:<br/> {{profile}}</p>
-<p>Content Size: {{body_size}}</p>
+<a href="{{profile_url}}">View Profile Information</a>
 
-<form id="logout_button"  action="/auth/logout" method="POST">
+<form id="logout_button"  action="{{logout_url}}" method="POST">
     <input type='submit' value='Logout'>
 </form>

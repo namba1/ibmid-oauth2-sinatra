@@ -10,6 +10,9 @@ class App < Sinatra::Base
 				@token_string
 			end
 
+			def user_info
+				@user_info
+			end
 		end		
 	end
 end

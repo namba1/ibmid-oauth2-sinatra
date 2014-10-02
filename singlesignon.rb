@@ -3,11 +3,14 @@ require 'json'
 require 'uri'
 
 class SingleSignOn
-
+	attr_reader :credentials, :auth_code, :authorized, :token_string, :profile
+	
   def initialize(client_id, client_secret, redirect_uri, env_services = nil)
     @client_id     = client_id
     @client_secret = client_secret
     @redirect_uri = redirect_uri
+    
+    init_variables()
     
     begin
       @credentials = JSON.parse(env_services)["single.sign.on"].first["credentials"]
@@ -27,30 +30,55 @@ class SingleSignOn
     @client = OAuth2::Client.new(client_id, client_secret, :token_url => @token_path, :site => @site, :authorize_url => @auth_path)
   end
   
+  def init_variables
+  	@auth_code = nil
+  	@token = nil
+    @token_string = nil
+    @profile = {}
+    @authorized = false
+    @error_message = ""
+  end
+  
   def authorize_url
     @auth_url = @client.auth_code.authorize_url(:redirect_uri => @redirect_uri, :response_type => 'code', :scope => 'profile')
   end
   
   def token_request(code)
-    @token = @client.auth_code.get_token(code, :redirect_uri => @redirect_uri)
-    @token.options[:header_format] = "OAuth %s"
-		@token.token
+  	begin
+	  	@auth_code = code
+	    @token = @client.auth_code.get_token(@auth_code, :redirect_uri => @redirect_uri)
+	    @token.options[:header_format] = "OAuth %s"
+			@token_string = @token.token
+			@authorized = true
+		rescue
+			@error_message = "Failed to obtain token."
+			@auth_code = nil
+			@token = nil
+			@token_string = nil
+			@authorized = false
+		end
   end
   
   def profile_request()
-  	token_options = {:header_format => @token.options[:header_format] , :mode => :body, :expires_at => @token[:expires_at]}
-  	access_token = OAuth2::AccessToken.new( @client, @token.token, token_options)
-		## access_options = {:headers => {"Content-Length" => "access_token=#{@token.token}".length().to_s }}
-  	## resp = access_token.post(profile_url, access_options)
-  	resp = access_token.post(profile_url)
-  	resp.body
+  	if @token then
+  		begin
+		  	token_options = {:header_format => @token.options[:header_format] , :mode => :body, :expires_at => @token[:expires_at]}
+		  	access_token = OAuth2::AccessToken.new( @client, @token.token, token_options)
+		  	resp = access_token.post(@credentials["profile_resource"])
+		  	@profile = JSON.parse(resp.body)
+		  rescue
+		  	@profile = {}
+		  	@error_message = "Failed to obtain profile information."
+		  end
+  	end
+  	@profile
   end
   
-  def profile_url
-  	@credentials["profile_resource"]
+  def logout()
+  		init_variables()
   end
   
-  ## Helper Functions
+  ## Helper Functions ----------------------------------------------------------
   def site (url)
     url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |s| s[1] end  
   end
