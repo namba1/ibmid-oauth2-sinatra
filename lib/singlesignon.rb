@@ -44,16 +44,12 @@ class SsoLogin
 	def initialize(sso)
 			@sso = sso
 			@client = sso.client
-			init_variables
-	end
-	  
-  def init_variables
-  	@auth_code = ""
-  	@token = nil
-    @token_string = ""
-    @profile = {}
-    @authorized = false
-    @error_message = "Please log in."
+	  	@auth_code = ""
+	  	@token = nil
+	    @token_string = ""
+	    @profile = {}
+	    @authorized = false
+	    @error_message = "Please log in."
   end
   
   def token_request(code)
@@ -92,9 +88,5 @@ class SsoLogin
   	end
 	  
   	@profile
-  end
-  
-  def logout
-  		init_variables()
   end
 end # class
