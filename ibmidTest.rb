@@ -21,51 +21,55 @@ class App < Sinatra::Base
 		:templates => './templates',
 	}
 
-	def sso; settings.sso; 	end			
-
+	use Rack::Session::Cookie,					# enable Rack sessions
+					:path => '/',
+					:expire_after => 60*60, 		# 1 hour
+					:secret => 'singlesignon_secret'
+							
 	configure do
-		set :sso, SingleSignOn.new(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, ENV["VCAP_SERVICES"])
+		@@sso = SsoCredentials.new(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, ENV["VCAP_SERVICES"])
 	end
-	
-	before '/' do
-    unless sso.authorized
-      redirect '/auth/login'
-    end
-  end
   
-	before '/:path' do
-		unless sso.authorized || params[:path][0..4] == 'auth/'
+	before do
+		unless session[:authorized] || request.path_info[0..5] == '/auth/'
 			redirect '/auth/login'
 		end
 	end
 	
   ###################################################
 	get '/auth/login' do
-		@auth_url = sso.authorize_url
+		@auth_url = @@sso.authorize_url
 	  mustache :login  
 	end
 	
 	get '/auth/callback' do
-	  sso.token_request(params[:code])				#### obtain token from the token URL
-	  sso.profile_request { |profile_data|  #### obtain profile data and validate it
-	  	profile_data['userRealm'] == 'www.ibm.com' && profile_data['AUTHENTICATION_LEVEL'] == '2'
-	  }
-		redirect (sso.authorized) ? '/' : '/auth/error'
+		login_ctl = SsoLogin.new(@@sso)
+	  if login_ctl.token_request(params[:code]) then																#### obtain token from the token URL
+		  session[:profile] = login_ctl.profile_request { |profile_data|  					#### obtain profile data and validate it
+		  	profile_data['userRealm'] == 'www.ibm.com' && profile_data['AUTHENTICATION_LEVEL'] == '2'	### or just 'true' to skip validation
+		  }
+	  end
+ 		session[:auth_code]      = params[:code]
+	  session[:token_string]   = login_ctl.token_string
+	  session[:authorized]     = login_ctl.authorized
+	  session[:error_message] = login_ctl.error_message
+	  
+		redirect (login_ctl.authorized) ? '/' : '/auth/error'
 	end
 
 	get '/auth/error' do
-		@error_message = sso.error_message
+		@error_message = session[:error_message]
 		mustache :autherror
 	end
 	
   post '/auth/logout' do
-  	sso.logout()
+  	session[:authorized] = false
     redirect '/auth/login'
   end
 
   ###################################################
   get '/' do
-    @user_name   = sso.profile["name"][0]
+    @user_name   = session[:profile]["name"][0]
     @view_profile_url = '/profile'
     @logout_url  = '/auth/logout'
     mustache :home
@@ -74,10 +78,10 @@ class App < Sinatra::Base
   get '/profile' do
     @version     = RUBY_VERSION
     @platform    = RUBY_PLATFORM
-    @credentials  = sso.credentials.collect { |k, v|  {:key => k, :value => v} }
-    @token_string = sso.token_string
-    @auth_code    = sso.auth_code
-    @user_info    = sso.profile.collect { |k, v| {"key" => k, "value" => v} }
+    @credentials  = @@sso.credentials.collect { |k, v|  {:key => k, :value => v} }
+    @token_string = session[:token_string] 
+    @auth_code    = session[:auth_code]
+    @user_info    = session[:profile].collect { |k, v| {"key" => k, "value" => v} }
     @logout_url   = '/auth/logout'
     mustache :profile
   end
