@@ -50,7 +50,6 @@ class SingleSignOn
 		rescue
 			@error_message = "Failed to obtain token."
 			@token = nil
-			@token_string = ""
 			@authorized = false
 		end
   end
@@ -67,6 +66,14 @@ class SingleSignOn
 		  	@error_message = "Failed to obtain profile information."
 		  end
   	end
+  	
+  	if block_given? then
+	  	unless yield( @profile )
+	  		init_variables()
+				@error_message = "Failed to validate profile."
+	  	end
+	  end
+	  
   	@profile
   end
   

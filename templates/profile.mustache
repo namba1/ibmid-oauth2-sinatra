@@ -1,11 +1,34 @@
 <!DOCTYPE html>
- <H1>Access Token</H1>
-<p>
-	Authorization Code: {{auth_code}}<br/>
-	Access Token: {{token}}
-</p>
+
+<H2>Web Server</H2>
+<ul>
+	<li>Ruby Version: {{ruby_version}}</li>
+	<li>Platform: {{platform}}</li>
+</ul>
+
+<H2>IBM ID URLs</H2>
+ <ul>
+{{#credentials}}
+	<li>{{key}}: {{value}} </li>
+{{/credentials}}
+</ul>
+
+
+<H2>Access Token</H2>
+ <ul>
+	<li>Authorization Code: {{auth_code}}</li>
+	<li>Access Token: {{token}}</li>
+</ul>
 
 <H2>User Info</H2>
+<ul>
 {{#user_info}}
  	<li>{{key}}: {{value}}</li>
 {{/user_info}}
+</ul>
+
+<p>
+<form id="logout_button"  action="{{logout_url}}" method="POST">
+    <input type='submit' value='Logout'>
+</form>
+</p>
