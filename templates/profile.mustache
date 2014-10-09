@@ -2,22 +2,21 @@
 
 <H2>Web Server</H2>
 <ul>
-	<li>Ruby Version: {{ruby_version}}</li>
-	<li>Platform: {{platform}}</li>
+	<li>Ruby Version: {{environment.ruby_version}}</li>
+	<li>Platform: {{environment.platform}}</li>
 </ul>
 
 <H2>IBM ID URLs</H2>
- <ul>
+<ul>
 {{#credentials}}
 	<li>{{key}}: {{value}} </li>
 {{/credentials}}
 </ul>
 
-
 <H2>Access Token</H2>
- <ul>
-	<li>Authorization Code: {{auth_code}}</li>
-	<li>Access Token: {{token}}</li>
+<ul>
+	<li>Authorization Code: {{oauth2.auth_code}}</li>
+	<li>Access Token: {{oauth2.token}}</li>
 </ul>
 
 <H2>User Info</H2>
@@ -27,8 +26,6 @@
 {{/user_info}}
 </ul>
 
-<p>
-<form id="logout_button"  action="{{logout_url}}" method="POST">
+<p><form id="logout_button"  action="{{logout_url}}" method="POST">
     <input type='submit' value='Logout'>
-</form>
-</p>
+</form></p>

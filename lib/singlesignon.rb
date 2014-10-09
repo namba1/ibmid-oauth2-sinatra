@@ -18,9 +18,9 @@ class SsoCredentials
     end
     
     @redirect_uri = redirect_uri
-    @site       = site(@credentials["authorize_url"])
-    @auth_path  = path(@credentials["authorize_url"])
-    @token_path = path(@credentials["token_url"])
+    @site       = site_path(@credentials["authorize_url"])[0]
+    @auth_path  = site_path(@credentials["authorize_url"])[1]
+    @token_path = site_path(@credentials["token_url"])[1]
     @client     = OAuth2::Client.new(client_id, client_secret, :token_url => @token_path, :site => @site, :authorize_url => @auth_path)
   end
 
@@ -28,13 +28,9 @@ class SsoCredentials
     @auth_url = @client.auth_code.authorize_url(:redirect_uri => @redirect_uri, :response_type => response_type, :scope => scope)
   end
 
-  ## Helper Functions ----------------------------------------------------------
-  def site (url)
-    url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |s| s[1] end  
-  end
-  
-  def path (url)
-    url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |s| s[2] end  
+  ## Helper Function -----------------------------------------
+  def site_path (url)
+    url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |s| [s[1], s[2]] end  
   end
 end # class
 
@@ -76,9 +72,11 @@ class SsoLogin
 		  	resp = access_token.post(@sso.credentials["profile_resource"])
 		  	@profile = JSON.parse(resp.body)
 		  	if block_given? then
-			  	unless yield( @profile )
-			  		@authorized = false
+			  	if yield( @profile ) then
+			  	  @error_message = "Login successful."
+			  	else
 						@error_message = "Failed to validate profile. Token: #{@token_string} "
+            @authorized = false
 			  	end
 			  end
 		  rescue => ex

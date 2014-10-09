@@ -1,7 +1,7 @@
 class App < Sinatra::Base
 	module Views
 		class Layout < Mustache
-			def title; "IBM ID Test" 	end	
+		  def title; @title || "Sample Login via IBM ID" end
 		end
 	end
 end
