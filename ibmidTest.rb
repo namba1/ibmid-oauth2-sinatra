@@ -4,9 +4,7 @@ require 'mustache/sinatra'
 require './lib/singlesignon.rb'
 
 #-----------------------------------------------------------		
-CLIENT_ID     = "KraXSNezEWGomEFpYYUW"
-CLIENT_SECRET = "AP5chAYohb2Mo8f8goQ4"
-REDIRECT_URL  = "https://sinatra99.mybluemix.net/auth/callback"
+SESSION_EXPIRE = ENV['SESSION_EXPIRE'] || '3600'  # default value for session expiration is 1 hour
 #-----------------------------------------------------------
 	
 class App < Sinatra::Base
@@ -16,12 +14,12 @@ class App < Sinatra::Base
 	alias_method :h, :escape_html
 	
 	set :mustache, { :views => './views', :templates => './templates' 	}                       # directories for views and mustache templates
-	use Rack::Session::Cookie, :path => '/',	:expire_after => 60*60*8, :secret => 'foo bar' 	# enable Rack sessions; cookies expire after 8 hours
+	use Rack::Session::Cookie, :path => '/',	:expire_after => SESSION_EXPIRE.to_i, :secret => 'foo bar' 	# enable Rack sessions
 							
 	configure do
-		@@sso = SsoCredentials.new(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, ENV["VCAP_SERVICES"])
+		@@sso = SsoCredentials.new(ENV['CLIENT_ID'], ENV['CLIENT_SECRET'] , ENV['REDIRECT_URL'] , ENV["VCAP_SERVICES"]) 
 	end
-  
+	
 	before do    # redirect to login page first if not logged-in
 		unless session[:authorized] || request.path_info[0..5] == '/auth/'
 			redirect '/auth/login'
@@ -29,7 +27,7 @@ class App < Sinatra::Base
 	end
 	
   #--- Routes for login/logout operations ------------------------------------
-	get '/auth/login' do # view login page
+	get '/auth/login' do 		# view login page
 		@auth_url = @@sso.authorize_url
 	  mustache :login  
 	end
@@ -46,7 +44,6 @@ class App < Sinatra::Base
     session[:error_message] = login_ctl.error_message
 	  session[:token_string]  = login_ctl.token_string      # optional info
     session[:auth_code]     = params[:code]               # optional info
-
 		redirect (login_ctl.authorized ? '/' : '/auth/error')
 	end
 

@@ -28,10 +28,10 @@ class SsoCredentials
     @auth_url = @client.auth_code.authorize_url(:redirect_uri => @redirect_uri, :response_type => response_type, :scope => scope)
   end
 
-  ## Helper Function -----------------------------------------
   def site_path (url)
     url.match(/^(.....\:\/\/[^\/]+)(.+$)/) do |s| [s[1], s[2]] end  
   end
+  private :site_path
 end # class
 
 class SsoLogin
