@@ -1,12 +1,15 @@
+# Licensed under the Apache License. See footer for details.
 require 'sinatra'
 require 'json'
 require 'mustache/sinatra'
-require './lib/singlesignon.rb'
+require './lib/ibmid-oauth2-sinatra.rb'
 
-#-----------------------------------------------------------		
+#-----------------------------------------------------------
+CLIENT_ID     = ENV['CLIENT_ID']	    || 'KraXSNezEWGomEFpYYUW'
+CLIENT_SECRET = ENV['CLIENT_SECRET'] || 'AP5chAYohb2Mo8f8goQ4'
+REDIRECT_URL  = ENV['REDIRECT_URL']	|| 'https://myapp.mybluemix.net/auth/callback'
 SESSION_EXPIRE = ENV['SESSION_EXPIRE'] || '3600'  # default value for session expiration is 1 hour
 #-----------------------------------------------------------
-	
 class App < Sinatra::Base
 	register Mustache::Sinatra
 	require './views/layout'
@@ -17,7 +20,7 @@ class App < Sinatra::Base
 	use Rack::Session::Cookie, :path => '/',	:expire_after => SESSION_EXPIRE.to_i, :secret => 'foo bar' 	# enable Rack sessions
 							
 	configure do
-		@@sso = SsoCredentials.new(ENV['CLIENT_ID'], ENV['CLIENT_SECRET'] , ENV['REDIRECT_URL'] , ENV["VCAP_SERVICES"]) 
+		@@sso = SsoCredentials.new(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, ENV['VCAP_SERVICES']) 
 	end
 	
 	before do    # redirect to login page first if not logged-in
@@ -32,10 +35,11 @@ class App < Sinatra::Base
 	  mustache :login  
 	end
 	
-	get '/auth/callback' do
+	get '/auth/callback' do    # User redirects to this page with authorization code
 		login_ctl = SsoLogin.new(@@sso)
 	  if login_ctl.token_request(params[:code]) then																#### obtain token from the token URL
 		  session[:profile] = login_ctl.profile_request { |profile_data|  					#### obtain profile data and validate it
+		     # true
 		  	 profile_data['userRealm'] == 'www.ibm.com' && profile_data['AUTHENTICATION_LEVEL'] == '2'	### or just 'true' to skip validation
 		  }
 	  end
@@ -74,3 +78,19 @@ class App < Sinatra::Base
     mustache :profile
   end
 end 
+
+#-------------------------------------------------------------------------------
+# Copyright IBM Corp. 2014
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#-------------------------------------------------------------------------------
