@@ -1,26 +1,7 @@
-Get started with ${app}
------------------------------------
-Welcome to your new Ruby Sinatra app!
+Instructions
+-----------
 
-Focused on quickly creating web applications in Ruby with minimal effort.
-
-1. [Install the cf command-line tool](${doc-url}/#starters/BuildingWeb.html#install_cf).
-2. [Download the starter application package](${ace-url}/rest/apps/${app-guid}/starter-download).
-3. Extract the package and `cd` to it.
-4. Connect to Bluemix:
-
-		cf api https://api.ng.bluemix.net
-5. Log into Bluemix:
-
-		cf login -u namba1@jp.ibm.com
-		cf target -o namba1@jp.ibm.com -s dev
-
-6. Deploy your app:
-		bundle install --path dummy
-		cf push sinatra99
-
-7. Access your app: sinatra99.mybluemix.net
-
-8. View log
-
-		cf logs sinatra99 --recent
+1. If you have not done so, create your account in IBM Bluemix.
+2. Create a Sinatra starter application in Bluemix.
+3. Create your main program in Ruby or modify the sample application (ibmid-oauth2-sinatra-Test.rb)
+4. Be sure to include (require) ./lib/ibmid-oauth2-sinatra.rb library file.
